@@ -1,0 +1,51 @@
+global:
+  domain: carldev.online
+
+
+frontend:
+  image: carlosalves77/portifolio-project-frontend:v.1.1
+  replicas: 3
+  port: 80
+  resources:
+    limits:
+      memory: "64Mi"
+      cpu: "100m"
+    requests:
+      memory: "32Mi"
+      cpu: "50m"
+
+
+apiGateway:
+  image: carlosalves77/api-gateway:latest
+  replicas: 1
+  port: 4000
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "256Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+
+authService:
+  image: carlosalves77/auth-service:latest 
+  port: 4005
+  db:
+    url: "jdbc:postgresql://postgres-auth:5432/auth_db"
+    user: "carl_admin"
+    password: "<AUTH_DATABASE_PASSWORD>" 
+    jwtSecret: "<JWT_SECRET>"
+
+
+ingress:
+  enabled: true
+  className: nginx
+  hosts:
+    frontend: <frontend.example.com>
+    api: <api.example.com>
+
+
+postgres:
+  storageClass: "local-path" 
+  size: "1Gi"    
